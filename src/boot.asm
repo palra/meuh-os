@@ -1,5 +1,7 @@
-[BITS 16]  ; indique a nasm que l'on travaille en 16 bits
-[ORG 0x0]
+;------------------------------------------
+; Avant de commencer, lisez attentivement
+; le dossier `doc/01-Architecture`
+;------------------------------------------
 
 ; initialisation des segments en 0x07C00
     mov ax, 0x07C0
@@ -10,15 +12,24 @@
     mov sp, 0xf000    ; stack de 0x8F000 -> 0x80000
 
 ; affiche un msg
-end:
     mov si, msgDebut
     call afficher
+end:
     jmp end
 
 
 ;--- Variables ---
     msgDebut db "Wsh", 0
 ;-----------------
+
+;---------------------------------------------
+; Vocabulaire :
+; - `DS:SI`
+;   `Data Segment` pointé par le registre `SI`
+; - `SS:SP`
+;   `Stack Segment` pointé par le registre `SP`
+;
+;---------------------------------------------
 
 ;---------------------------------------------------------
 ; Synopsis: Affiche une chaine de caracteres se terminant par 0x0
