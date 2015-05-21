@@ -65,10 +65,118 @@ Chacun de ces registres se décomposent en 2 registres de 8 bits : un registre *
 
 Ces registres ont une taille de 32 bits, car ils sont étendus (d'où le `E`), et se décomposent en un sous registre de 16 bit comme vu en haut.
 
- - ESP : Stack Pointer, on va voir ça plus bas.
+ - ESP : Stack Pointer
  - EIP : Instruction Pointer, contient l'adresse de la prochaine instruction à exécuter. Inacessible directemenent, uniquement via des opérandes (jmp, call, ret ...)
  - EDI : Destination Index, voir ESI
  - ESI : Source Index, utilisé pour des opérations de copie de suite d'octets
  - EFLAG : encore un peu plus bas
 
-TODO : stack, flags
+## La pile
+
+Pour manipuler nos données, nous avons les 4 registres de travail EAX, EBX, ECX et EDX. Imaginons que pendant l'exécution de notre programme nous voulons passer la main à un sous-programme, histoire de ne pas se répéter et de simplifier les choses. Ce sous-programme travaillera sur les même registres de travail. Avant de lui passer la main, il faut donc sauvegarder l'état de ces registres avant de continuer. On utilise donc une pile, plus spécifiquement une pile FIFO (First In First Out).
+
+Le principe : on réserve en mémoire une zone dédiée à stocker l'état de ces registres. Pour cela, on utilise les deux registres de pile
+
+ - SS contient l'adresse du segment de la pile en mémoire
+ - ESP est l'offset à ajouter à SS pour atteindre le dernier élément stocké dans la pile
+
+En représentant la mémoire de manière verticale, on a :
+
+```
++-------+  0x100000
+|       |          
+|       |          
+|       |          
+|       |          
+|       |          
+|       |          
+|       |          
++-------+  SS:ESP  
+|   +   |          
+|   |   |          
+|   |   |          
+|   |   |          
+|   |   |          
+|   v   |          
++-------+  SS:00   
+|       |          
+|       |          
+|       |          
+|       |          
+|       |          
+|       |          
+|       |          
++-------+  0x0     
+```
+
+Lorsque l'on veut ajouter un élément à la pile :
+
+ 1. Le processeur va à l'adresse SS:ESP
+ 2. Il retire à ESP la taille des données à insérer (concrètement, la taille du registre)
+ 2. Il ajoute les données à insérer à la nouvelle adresse SS:ESP
+
+```
++-------+  0x100000    +-------+  0x100000    +-------+  0x100000
+|       |              |       |              |       |          
+|       |              |       |              |       |          
+|       |              |       |              |       |          
+|       |              |       |              |       |          
+|       |              |       |              |       |          
+|       |              |       |              |       |          
+|       |              |       |              |       |          
++-------+              +-------+              +-------+          
+|10010..|  SS:ESP      |10010..|              |10010..|          
+|   +   |              |00101..|  SS:ESP      |00101..|          
+|   |   |              |   +   |              |10111..|  SS:ESP  
+|   |   |              |   |   |              |   x   |          
+|   |   |              |   |   |              |   |   |          
+|   v   |              |   v   |              |   v   |          
++---+---+  SS:00       +---+---+  SS:00       +---+---+  SS:00   
+|       |              |       |              |       |          
+|       |              |       |              |       |          
+|       |              |       |              |       |          
+|       |              |       |              |       |          
+|       |              |       |              |       |          
+|       |              |       |              |       |          
+|       |              |       |              |       |          
++-------+  0x0         +-------+  0x0         +-------+  0x0     
+                                                                 
+ESP = 0x10             ESP = 0x0F             ESP = 0x0E         
+```
+
+Inversement, lorsque l'on veut récupérer le dernier élément de la pile :
+
+ 1. Le processeur va à l'adresse SS:ESP
+ 2. Il lit le dernier élément, et le supprime de la pile
+ 3. Il incrémente ESP de la taille de la donnée supprimée
+
+```
++-------+  0x100000    +-------+  0x100000    +-------+  0x100000
+|       |              |       |              |       |          
+|       |              |       |              |       |          
+|       |              |       |              |       |          
+|       |              |       |              |       |          
+|       |              |       |              |       |          
+|       |              |       |              |       |          
+|       |              |       |              |       |          
++-------+              +-------+              +-------+          
+|10010..|              |10010..|              |10010..|  SS:ESP  
+|00101..|              |00101..|  SS:ESP      |   +   |          
+|10111..|  SS:ESP      |   +   |              |   |   |          
+|   x   |              |   |   |              |   |   |          
+|   |   |              |   |   |              |   |   |          
+|   v   |              |   v   |              |   v   |          
++---+---+  SS:00       +---+---+  SS:00       +---+---+  SS:00   
+|       |              |       |              |       |          
+|       |              |       |              |       |          
+|       |              |       |              |       |          
+|       |              |       |              |       |          
+|       |              |       |              |       |          
+|       |              |       |              |       |          
+|       |              |       |              |       |          
++-------+  0x0         +-------+  0x0         +-------+  0x0     
+                                                                 
+ESP = 0x0E             ESP = 0x0F             ESP = 0x10         
+```
+
+TODO : flags
