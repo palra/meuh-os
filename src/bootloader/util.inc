@@ -1,3 +1,8 @@
+;---------------------------------------------------------
+; Synopsis: Affiche une chaine de caracteres se terminant par 0x0
+; Entree:   DS:SI -> pointe sur la chaine a afficher
+;---------------------------------------------------------
+
 print:
     push ax
     push bx

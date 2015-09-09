@@ -1,25 +1,54 @@
-BIN_FOLDER=bin
-FLOPPY=$(BIN_FOLDER)/floppy
-BOOTSECT=$(BIN_FOLDER)/bootsect
-KERNEL=$(BIN_FOLDER)/kernel
-NASM=nasm -i src/
+export NASM=nasm -f bin
+export NFLAGS=
+export CC=gcc
+export CFLAGS=-W -Wall -ansi -pedantic
+export LDFLAGS=
+
+# Floppy output
+FLOPPY=floppy.img
+
+# Sources dir
+SRC_DIR=src/
+
+# Bootsect vars
+BOOTLDR_DIR=$(SRC_DIR)bootloader/
+export BOOTLDR_EXEC=bootloader.x
+
+# Kernel vars
+KERNEL_DIR=$(SRC_DIR)kernel/
+export KERNEL_EXEC=kernel.x
+
+# Emulation vars
 BOCHS=bochs
 BOCHS_OPTS=-q 'display_library: sdl'
 
-floppy: boot kernel
-	cat $(BOOTSECT) $(KERNEL) /dev/zero | dd of=$(FLOPPY) bs=512 count=2880
+# Tasks
 
-kernel: src/kernel.asm
-	$(NASM) -f bin -o $(KERNEL) $<
+all: $(FLOPPY)
 
-boot: src/boot.asm
-	$(NASM) -f bin -o $(BOOTSECT) $<
+run: $(FLOPPY)
+	$(BOCHS) $(BOCHS_OPTS) 'boot:a' 'floppya: 1_44=$(FLOPPY), status=inserted'
 
-run: floppy
-	$(BOCHS) $(BOCHS_OPTS) 'boot:a' 'floppya: 1_44=$(FLOPPY), status=inserted' 
+$(FLOPPY): bootloader kernel
+	cat $(BOOTLDR_DIR)$(BOOTLDR_EXEC) $(KERNEL_DIR)$(KERNEL_EXEC) /dev/zero | \
+		dd of=$(FLOPPY) bs=512 count=2880
 
-bin-folder:
-	mkdir -p $(BIN_FOLDER)
+bootloader:
+	@(cd $(BOOTLDR_DIR) && $(MAKE))
+
+kernel:
+	@(cd $(KERNEL_DIR) && $(MAKE))
+
+
+
+
+.PHONY: $(FLOPPY) clean mrproper
 
 clean:
-	rm -fr $(BIN_FOLDER)
+	rm -rf $(FLOPPY)
+	@(cd $(BOOTLDR_DIR) && $(MAKE) clean)
+	@(cd $(KERNEL_DIR) && $(MAKE) clean)
+
+mrproper: clean
+	@(cd $(BOOTLDR_DIR) && $(MAKE) mrproper)
+	@(cd $(KERNEL_DIR) && $(MAKE) mrproper)
