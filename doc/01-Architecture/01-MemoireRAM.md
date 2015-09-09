@@ -36,7 +36,7 @@ Seul l'ordre des octets change, les octets conservent le même ordre d'écriture
 
 Les processeurs x86 (ceux que pratiquement tout le monde a sur leur ordinateur) sont en little endian.
 
-### Notation des adresse
+### Représentation linéaire d'une adresse
 
 A chaque octet on associe une adresse. Le premier octet aura pour adresse 0, le second 1, le troisième 10, le quatrième 11 ...
 

@@ -75,15 +75,15 @@ Ces registres ont une taille de 32 bits, car ils sont étendus (d'où le `E`), e
 
 Pour manipuler nos données, nous avons les 4 registres de travail EAX, EBX, ECX et EDX. Imaginons que pendant l'exécution de notre programme nous voulons passer la main à un sous-programme, histoire de ne pas se répéter et de simplifier les choses. Ce sous-programme travaillera sur les même registres de travail. Avant de lui passer la main, il faut donc sauvegarder l'état de ces registres avant de continuer. On utilise donc une pile, plus spécifiquement une pile FIFO (First In First Out).
 
-Le principe : on réserve en mémoire une zone dédiée à stocker l'état de ces registres. Pour cela, on utilise les deux registres de pile
+Le principe : on réserve en mémoire une zone dédiée à stocker l'état de ces registres. Pour faire cela, on utilise les deux registres de pile :
 
  - SS contient l'adresse du segment de la pile en mémoire
- - ESP est l'offset à ajouter à SS pour atteindre le dernier élément stocké dans la pile
+ - ESP est l'offset à ajouter à SS pour atteindre le dernier élément stocké dans la pile (rappelez vous, notation linéaire d'une addresse ...)
 
-En représentant la mémoire de manière verticale, on a :
+En représentant la mémoire de manière graphique, on a :
 
 ```
-+-------+  0x100000
++-------+  0x100000 (en supposant que la RAM aie une taille de 0x100000 octets)
 |       |          
 |       |          
 |       |          
