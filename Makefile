@@ -1,5 +1,5 @@
-export NASM=nasm -f bin
-export NFLAGS=
+export NASM=nasm
+export NFLAGS=-f bin
 export CC=gcc
 export CFLAGS=-W -Wall -ansi -pedantic
 export LDFLAGS=

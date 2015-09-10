@@ -1,7 +1,7 @@
 all: $(KERNEL_EXEC)
 
 $(KERNEL_EXEC): kernel.asm
-	$(NASM) -o $@ $^
+	$(NASM) $(NFLAGS) -o $@ $^
 
 .PHONY: clean mrproper
 

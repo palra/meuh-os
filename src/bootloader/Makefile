@@ -1,7 +1,7 @@
 all: $(BOOTLDR_EXEC)
 
 $(BOOTLDR_EXEC): boot.asm
-	$(NASM) -o $@ $^
+	$(NASM) $(NFLAGS)  -o $@ $^
 
 .PHONY: clean mrproper
 
