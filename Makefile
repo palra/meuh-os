@@ -1,8 +1,8 @@
 export NASM=nasm
 export NFLAGS=-f bin
-export CC=gcc
-export CFLAGS=-W -Wall -ansi -pedantic
-export LDFLAGS=
+export CC=g++
+export CFLAGS=-W -Wall -ansi -pedantic -std=gnu++11
+export LDFLAGS=--oformat binary
 
 # Floppy output
 FLOPPY=floppy.img

@@ -48,5 +48,5 @@ Exemple : lire les 5 premiers secteurs du disque 0 :
 	xor ch, ch ; On met le registre `ch` à 0 : numéro du cylindre
 	mov cl, 1  ; Secteur de début, le 1er
 	xor dh, dh ; Tête de lecture n°0, en général y'en a qu'une seule de tête
-	int 0x13 ; On exécute le tout !
+	int 0x13   ; On exécute le tout !
 ```
