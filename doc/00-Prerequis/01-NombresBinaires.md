@@ -7,7 +7,7 @@ Binaire : système numérique avec que des 0 ou des 1
  - 0 ou 1 : **bit**
  - 8 bits : **octet** (*byte*)
  - 2 octets : **mot** (*word*)
- - 2 mots : **double-mot** (*double-word*)
+ - 4 octets, 2 mots : **double-mot** (*double-word*)
  - 16 octets, 8 mots ou 4 double-mots : **paragraphe** (*paragraph*)
 
 ## Arithmétique, ou comment représenter des nombres en binaires ?
